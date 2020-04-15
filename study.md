@@ -16,7 +16,9 @@ request_handle:headers():replace("locale",lua_value2.locale)
 - https://www.lua.org/cgi-bin/demo
 
 ### Istio proxy debug
-- request_handle:logInfo("******* enter envoy_on_request")
+```
+request_handle:logInfo("******* enter envoy_on_request")
+```
 
 ### Change log level of istio-proxy
 ```
