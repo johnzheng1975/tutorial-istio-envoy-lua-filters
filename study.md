@@ -21,6 +21,7 @@ request_handle:logInfo("******* enter envoy_on_request")
 ```
 
 ### Change log level of istio-proxy
+Refer https://www.envoyproxy.io/docs/envoy/latest/operations/admin#get--server_info
 ```
 curl localhost:15000/server_info
 curl -X POST localhost:15000/logging?level=info
