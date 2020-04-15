@@ -16,6 +16,7 @@ spec:
         JSON = (loadfile "/var/lib/lua/JSON.lua")() -- one-time load of the routines
         uuid = (loadfile "/var/lib/lua/uuid.lua")() -- one-time load of the routines
         function envoy_on_request(request_handle)
+          request_handle:logInfo("******* enter envoy_on_request")
           function urldecode(s)
             s = s:gsub('+', ' ')
                 :gsub('%%(%x%x)', function(h)
@@ -39,21 +40,24 @@ spec:
           local brand = headers:get("brand")
           local systemid = headers:get("systemid")
           local correlationid = headers:get("correlationid")
-          local lua_value = {}
+          local lua_value = {locale="mylvalue"}
+          local lua_value2 = {locale="mylvalue"}
           if content_type == "application/json" then
-            request_handle:logDebug("******* The body is application json")
+            request_handle:logInfo("******* The body is application json")
             local body = request_handle:body()
             local body_size = body:length()
             local body_bytes = body:getBytes(0, body_size)
             local raw_json_text = tostring(body_bytes)
             lua_value = JSON:decode(raw_json_text) -- decode example
+            request_handle:logInfo(lua_value2.locale)
           end
           if locale == nil then
             if query_params["locale"] ~= nil then
               request_handle:headers():replace("locale",query_params["locale"])
             else
-              if lua_value.locale ~= nil then
-                request_handle:headers():replace("locale",lua_value.locale)
+              if lua_value2.locale ~= nil then
+                request_handle:logInfo("*******  lua_value.locale ~= nil")
+                request_handle:headers():replace("locale",lua_value2.locale)
               end
             end
           end
@@ -89,4 +93,4 @@ spec:
               end
             end
           end
-        end
+        end 
