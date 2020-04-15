@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: custom-filter-2
+  namespace: istio-system
+spec:
+  filters:
+  - listenerMatch:
+      portNumber: 80
+      listenerType: SIDECAR_INBOUND
+      listenerProtocol: HTTP
+    filterName: envoy.lua
+    filterType: HTTP
+    filterConfig:
+      inlineCode: |
+        function envoy_on_request(request_handle)
+          request_handle:logInfo("******* enter envoy_on_request custom-filter-2")
+          request_handle:headers():replace("mylol","hivalue")
+        end 
