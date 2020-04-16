@@ -228,4 +228,9 @@ Use 'kubectl describe pod/nginx-c46747ffd-bnjgg -n default' to see all of the co
     "hostname": "web-74f84ccc8-86vbr"
   }
 }
+
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar$ kubectl get pods,svc,ep -o wide -A|grep 10.248.11.115
+default        pod/web-74f84ccc8-86vbr                       2/2     Running     0          25h     10.248.11.115   ip-10-248-9-199.us-west-2.compute.internal    <none>           <none>
+default        endpoints/web-service               10.248.11.115:80                                                      3d5h
+
 ```
