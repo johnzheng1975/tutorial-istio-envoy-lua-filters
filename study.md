@@ -97,6 +97,7 @@ Use 'kubectl describe pod/nginx-c46747ffd-bnjgg -n default' to see all of the co
 }
 ```
 ### Add additional filed for sidecar
+Refer to: https://github.com/istio/istio/wiki/EnvoyFilter-Samples
 configure
 ```
 apiVersion: networking.istio.io/v1alpha3
@@ -161,4 +162,70 @@ Use 'kubectl describe pod/nginx-c46747ffd-bnjgg -n default' to see all of the co
 tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar$ kubectl get pods,svc,ep -o wide -A|grep 10.248.11.87
 default        pod/nginx-c46747ffd-bnjgg                     2/2     Running     0          25h     10.248.11.87    ip-10-248-9-199.us-west-2.compute.internal    <none>           <none>
 
+```
+
+### Add more fileds
+Refer to: https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers#x-forwarded-for
+Configure:
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: xff2
+  namespace: istio-system
+spec:
+  configPatches:
+  - applyTo: NETWORK_FILTER
+    match:
+      context: ANY
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.http_connection_manager"
+    patch:
+      operation: MERGE
+      value:
+        typed_config:
+          "@type": "type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager"
+          add_user_agent: true
+```
+
+Test result:
+```
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar$ k exec -ti nginx-c46747ffd-bnjgg -- curl web-service.default
+Defaulting container name to nginx.
+Use 'kubectl describe pod/nginx-c46747ffd-bnjgg -n default' to see all of the containers in this pod.
+{
+  "path": "/",
+  "headers": {
+    "host": "web-service.default",
+    "user-agent": "curl/7.52.1",
+    "accept": "*/*",
+    "x-forwarded-for": "10.248.11.87,10.248.11.87",
+    "x-forwarded-proto": "http",
+    "x-request-id": "77606c8b-b885-9455-a73e-b697dfe0bfb8",
+    "content-length": "0",
+    "x-envoy-downstream-service-cluster": "web.default",
+    "x-envoy-downstream-service-node": "sidecar~10.248.11.115~web-74f84ccc8-86vbr.default~default.svc.cluster.local",
+    "x-envoy-external-address": "10.248.11.87",
+    "mylol": "hivalue",
+    "x-b3-traceid": "9cae55b1da33fc72817abe7d00c5c9c4",
+    "x-b3-spanid": "9ab886d79bc84564",
+    "x-b3-parentspanid": "817abe7d00c5c9c4",
+    "x-b3-sampled": "1"
+  },
+  "method": "GET",
+  "body": "",
+  "fresh": false,
+  "hostname": "web-service.default",
+  "ip": "::ffff:127.0.0.1",
+  "ips": [],
+  "protocol": "http",
+  "query": {},
+  "subdomains": [],
+  "xhr": false,
+  "os": {
+    "hostname": "web-74f84ccc8-86vbr"
+  }
+}
 ```
