@@ -96,3 +96,69 @@ Use 'kubectl describe pod/nginx-c46747ffd-bnjgg -n default' to see all of the co
   }
 }
 ```
+### Add additional filed for sidecar
+configure
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: xff
+  namespace: istio-system
+spec:
+  configPatches:
+  - applyTo: NETWORK_FILTER
+    match:
+      context: ANY
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.http_connection_manager"
+    patch:
+      operation: MERGE
+      value:
+        typed_config:
+          "@type": "type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager"
+          use_remote_address: true
+          xff_num_trusted_hops: 1
+```
+
+Test result
+```
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar$ k exec -ti nginx-c46747ffd-bnjgg -- curl web-service.default
+Defaulting container name to nginx.
+Use 'kubectl describe pod/nginx-c46747ffd-bnjgg -n default' to see all of the containers in this pod.
+{
+  "path": "/",
+  "headers": {
+    "host": "web-service.default",
+    "user-agent": "curl/7.52.1",
+    "accept": "*/*",
+    "x-forwarded-for": "10.248.11.87",
+    "x-forwarded-proto": "http",
+    "x-request-id": "8c6e4c87-5dde-9b17-87b9-a740c83d0b22",
+    "content-length": "0",
+    "x-envoy-internal": "true",
+    "mylol": "hivalue",
+    "x-b3-traceid": "c801c4e37a0471c2d557a375406d9dd1",
+    "x-b3-spanid": "e21640cb5e3cd6ae",
+    "x-b3-parentspanid": "d557a375406d9dd1",
+    "x-b3-sampled": "1"
+  },
+  "method": "GET",
+  "body": "",
+  "fresh": false,
+  "hostname": "web-service.default",
+  "ip": "::ffff:127.0.0.1",
+  "ips": [],
+  "protocol": "http",
+  "query": {},
+  "subdomains": [],
+  "xhr": false,
+  "os": {
+    "hostname": "web-74f84ccc8-86vbr"
+  }
+  
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar$ kubectl get pods,svc,ep -o wide -A|grep 10.248.11.87
+default        pod/nginx-c46747ffd-bnjgg                     2/2     Running     0          25h     10.248.11.87    ip-10-248-9-199.us-west-2.compute.internal    <none>           <none>
+
+```
