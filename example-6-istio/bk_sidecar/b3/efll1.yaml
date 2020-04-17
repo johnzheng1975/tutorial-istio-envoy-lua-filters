@@ -1,0 +1,30 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: efll1
+  namespace: ll
+spec:
+  configPatches:
+    # The first patch adds the lua filter to the listener/http connection manager
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_OUTBOUND
+      listener:
+        portNumber: 80
+        filterChain:
+          filter:
+            name: "envoy.http_connection_manager"
+            subFilter:
+              name: "envoy.router"
+    patch:
+      operation: INSERT_BEFORE
+      value: # lua filter specification
+       name: envoy.lua
+       config:
+         inlineCode: |
+           function envoy_on_request(request_handle)
+             request_handle:logInfo("******* enter envoy_on_request ef-ll")
+             request_handle:headers():replace("tenant_id","ll")
+           end 
+
+

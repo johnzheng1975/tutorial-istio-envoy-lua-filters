@@ -1,0 +1,29 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: vrteid
+  namespace: vr
+spec:
+  configPatches:
+    # The first patch adds the lua filter to the listener/http connection manager
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_INBOUND
+      listener:
+        portNumber: 80
+        filterChain:
+          filter:
+            name: "envoy.http_connection_manager"
+            subFilter:
+              name: "envoy.router"
+    patch:
+      operation: INSERT_BEFORE
+      value: # lua filter specification
+       name: envoy.lua
+       typed_config:
+          "@type": "type.googleapis.com/envoy.config.filter.http.lua.v2.Lua"
+         inlineCode: |
+           function envoy_on_request(request_handle)
+             request_handle:logInfo("******* enter envoy_on_request custom-filter-2")
+             request_handle:headers():replace("pptt","ppvr")
+           end
