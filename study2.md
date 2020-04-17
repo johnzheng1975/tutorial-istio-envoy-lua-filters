@@ -222,3 +222,7 @@ Use 'kubectl describe pod/jnginxll2-6fb56688bf-8vnln -n ll' to see all of the co
 }
 ```
 
+## Detail code
+https://github.com/johnzheng1975/tutorial-istio-envoy-lua-filters/tree/master/example-6-istio/bk_sidecar/b4
+
+
