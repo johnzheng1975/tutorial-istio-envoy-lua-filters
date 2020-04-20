@@ -164,7 +164,7 @@ default        pod/nginx-c46747ffd-bnjgg                     2/2     Running    
 
 ```
 
-### Add more fileds
+### Add more fields
 Refer to: https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers#x-forwarded-for
 Configure:
 ```
