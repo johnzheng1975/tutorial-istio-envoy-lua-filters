@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: efdd2try
+  namespace: istio-system
+spec:
+  workloadLabels:
+    app: istio-ingressgateway
+  filters:
+  - listenerMatch:
+      listenerType: GATEWAY
+    filterName: envoy.lua
+    filterType: HTTP
+    filterConfig:
+      inlineCode: |
+        function envoy_on_request(request_handle)
+          request_handle:logInfo("******* enter envoy_on_request ef-dd2")
+          request_handle:headers():replace("x-hpbp-tenant-id","daas")
+        end

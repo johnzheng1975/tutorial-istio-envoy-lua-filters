@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: ef-vr-easytry
+  namespace: vr
+spec:
+  workloadLabels:
+    tenantid: vr
+    app: jn2
+  filters:
+  - listenerMatch:
+      portNumber: 80
+      listenerType: SIDECAR_OUTBOUND
+      listenerProtocol: HTTP
+    filterName: envoy.lua
+    filterType: HTTP
+    filterConfig:
+      inlineCode: |
+        function envoy_on_request(request_handle)
+          request_handle:logInfo("******* enter envoy_on_request ef-vr")
+          request_handle:headers():replace("x-hpbp-tenant-id","vr")
+        end 

@@ -1,0 +1,141 @@
+seems namespace not works
+but workloadLabels works.
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ k get pods -n ll
+NAME                         READY   STATUS    RESTARTS   AGE
+jnginxll-76474cf48b-zzxwb    2/2     Running   0          13m
+jnginxll2-6fb56688bf-hgqgv   2/2     Running   0          13m
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ k exec -ti -n ll jnginxll-76474cf48b-zzxwb  -- curl web-service.default
+Defaulting container name to jnginxll.
+Use 'kubectl describe pod/jnginxll-76474cf48b-zzxwb -n ll' to see all of the containers in this pod.
+{
+  "path": "/",
+  "headers": {
+    "host": "web-service.default",
+    "user-agent": "curl/7.52.1",
+    "accept": "*/*",
+    "x-forwarded-proto": "http",
+    "x-request-id": "33fcf1c3-6838-9f8f-8661-9e4e9667a63e",
+    "content-length": "0",
+    "x-b3-traceid": "14ae877af9e1b0656dfe845c5833f89b",
+    "x-b3-spanid": "7f62eb469640abeb",
+    "x-b3-parentspanid": "6dfe845c5833f89b",
+    "x-b3-sampled": "1"
+  },
+  "method": "GET",
+  "body": "",
+  "fresh": false,
+  "hostname": "web-service.default",
+  "ip": "::ffff:127.0.0.1",
+  "ips": [],
+  "protocol": "http",
+  "query": {},
+  "subdomains": [],
+  "xhr": false,
+  "os": {
+    "hostname": "web-74f84ccc8-544f8"
+  }
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$  k exec -ti -n ll jnginxll2-6fb56688bf-hgqgv  -- curl web-service.default
+Defaulting container name to jnginxll2.
+Use 'kubectl describe pod/jnginxll2-6fb56688bf-hgqgv -n ll' to see all of the containers in this pod.
+{
+  "path": "/",
+  "headers": {
+    "host": "web-service.default",
+    "user-agent": "curl/7.52.1",
+    "accept": "*/*",
+    "x-forwarded-proto": "http",
+    "x-request-id": "9d14fa35-d2ad-9fb2-af1f-9f27f15c76bf",
+    "x-hpbp-tenant-id": "lifeline",
+    "content-length": "0",
+    "x-b3-traceid": "3aa57e79a23dea2629fd4e686fb1fc49",
+    "x-b3-spanid": "3ced3715d7d68f3c",
+    "x-b3-parentspanid": "29fd4e686fb1fc49",
+    "x-b3-sampled": "1"
+  },
+  "method": "GET",
+  "body": "",
+  "fresh": false,
+  "hostname": "web-service.default",
+  "ip": "::ffff:127.0.0.1",
+  "ips": [],
+  "protocol": "http",
+  "query": {},
+  "subdomains": [],
+  "xhr": false,
+  "os": {
+    "hostname": "web-74f84ccc8-544f8"
+  }
+}tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ 
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ 
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ k get pods -n vr
+NAME                         READY   STATUS    RESTARTS   AGE
+jnginxvr-5c6b57df4b-gzkhw    2/2     Running   0          14m
+jnginxvr2-84d9d8c557-vkrm5   2/2     Running   0          14m
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ k logs jnginxvr-5c6b57df4b-gzk^C
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ k exec -ti -n vr jnginxvr-5c6b57df4b-gzkhw  -- curl web-service.default
+Defaulting container name to jnginxvr.
+Use 'kubectl describe pod/jnginxvr-5c6b57df4b-gzkhw -n vr' to see all of the containers in this pod.
+{
+  "path": "/",
+  "headers": {
+    "host": "web-service.default",
+    "user-agent": "curl/7.52.1",
+    "accept": "*/*",
+    "x-forwarded-proto": "http",
+    "x-request-id": "26e3e688-1aad-901d-a521-da5aa000e13b",
+    "content-length": "0",
+    "x-b3-traceid": "95e3cf9187d24e0f2412cdc12b176415",
+    "x-b3-spanid": "8f588bcc72a9aff8",
+    "x-b3-parentspanid": "2412cdc12b176415",
+    "x-b3-sampled": "1"
+  },
+  "method": "GET",
+  "body": "",
+  "fresh": false,
+  "hostname": "web-service.default",
+  "ip": "::ffff:127.0.0.1",
+  "ips": [],
+  "protocol": "http",
+  "query": {},
+  "subdomains": [],
+  "xhr": false,
+  "os": {
+    "hostname": "web-74f84ccc8-544f8"
+  }
+}tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ 
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ 
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ ls
+ef_dd_gateway.yaml  ef_lifeline.yaml  ef_vr.yaml
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ 
+tryc2@ip-172-31-0-31:~/tutorial-istio-envoy-lua-filters/example-6-istio/bk_sidecar/b4enhence$ k exec -ti -n vr jnginxvr2-84d9d8c557-vkrm5  -- curl web-service.default
+Defaulting container name to jnginxvr2.
+Use 'kubectl describe pod/jnginxvr2-84d9d8c557-vkrm5 -n vr' to see all of the containers in this pod.
+{
+  "path": "/",
+  "headers": {
+    "host": "web-service.default",
+    "user-agent": "curl/7.52.1",
+    "accept": "*/*",
+    "x-forwarded-proto": "http",
+    "x-request-id": "da5a648a-6794-961e-831d-4d5b70efcab6",
+    "x-hpbp-tenant-id": "vr",
+    "content-length": "0",
+    "x-b3-traceid": "524359fb2a47248b868ce5e56944b697",
+    "x-b3-spanid": "bb58d72b7d5026c2",
+    "x-b3-parentspanid": "868ce5e56944b697",
+    "x-b3-sampled": "1"
+  },
+  "method": "GET",
+  "body": "",
+  "fresh": false,
+  "hostname": "web-service.default",
+  "ip": "::ffff:127.0.0.1",
+  "ips": [],
+  "protocol": "http",
+  "query": {},
+  "subdomains": [],
+  "xhr": false,
+  "os": {
+    "hostname": "web-74f84ccc8-544f8"
+  }
+
