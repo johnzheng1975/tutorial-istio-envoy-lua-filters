@@ -1,0 +1,26 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  labels:
+    app: istio-ingressgateway
+    operator.istio.io/component: IngressGateway
+    operator.istio.io/managed: Reconcile
+    operator.istio.io/version: 1.4.6
+    release: istio
+  name: istio-multicluster-ingressgateway
+  namespace: istio-system
+spec:
+  filters:
+  - filterConfig:
+      cluster_pattern: \.global$
+      cluster_replacement: .svc.cluster.local
+    filterName: envoy.filters.network.tcp_cluster_rewrite
+    filterType: NETWORK
+    insertPosition:
+      index: AFTER
+      relativeTo: envoy.filters.network.sni_cluster
+    listenerMatch:
+      listenerType: GATEWAY
+      portNumber: 15443
+  workloadLabels:
+    istio: ingressgateway

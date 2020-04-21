@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  labels:
+    app: istio-egressgateway
+    operator.istio.io/component: EgressGateway
+    operator.istio.io/managed: Reconcile
+    operator.istio.io/version: 1.4.6
+    release: istio
+  name: istio-multicluster-egressgateway
+  namespace: istio-system
+spec:
+  filters:
+  - filterConfig: {}
+    filterName: envoy.filters.network.sni_cluster
+    filterType: NETWORK
+    listenerMatch:
+      listenerType: GATEWAY
+      portNumber: 15443
+  workloadLabels:
+    istio: egressgateway

@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: istio-multicluster-ingressgateway
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "gateway.name" . }}
+    chart: {{ template "gateway.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  workloadLabels:
+  {{- range $key, $spec := .Values }}
+  {{- if eq $key "istio-ingressgateway" }}
+  {{- if $spec.enabled }}
+    {{- range $key, $val := $spec.labels }}
+    {{ $key }}: {{ $val }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  filters:
+  - listenerMatch:
+      portNumber: 15443
+      listenerType: GATEWAY
+    insertPosition:
+      index: AFTER
+      relativeTo: envoy.filters.network.sni_cluster
+    filterName: envoy.filters.network.tcp_cluster_rewrite
+    filterType: NETWORK
+    filterConfig:
+      cluster_pattern: "\\.global$"
+      cluster_replacement: ".svc.{{ .Values.global.proxy.clusterDomain }}"
