@@ -234,3 +234,4 @@ default        pod/web-74f84ccc8-86vbr                       2/2     Running    
 default        endpoints/web-service               10.248.11.115:80                                                      3d5h
 
 ```
+---
